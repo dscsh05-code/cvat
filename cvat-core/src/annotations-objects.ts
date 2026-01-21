@@ -1349,6 +1349,23 @@ export class Track extends Drawn {
         }
 
         if (updated.points && fittedPoints.length) {
+            const lastOutsideFrame = Object.keys(this.shapes).reduce((acc, key) => {
+                if (!this.shapes[key].outside) {
+                    return acc;
+                }
+
+                const frame = Number(key);
+                if (Number.isNaN(frame)) {
+                    return acc;
+                }
+
+                return frame > acc ? frame : acc;
+            }, Number.NEGATIVE_INFINITY);
+
+            if (Number.isFinite(lastOutsideFrame)) {
+                this.savePoints(fittedPoints, lastOutsideFrame);
+            }
+
             this.savePoints(fittedPoints, frame);
         }
 
